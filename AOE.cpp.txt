@@ -1,0 +1,183 @@
+#include"AOE.h"
+//初始化邻接表
+ALGraph::ALGraph(char* v, int n, int m)
+{
+	vertexnum = n;
+	arcnum = m;
+	adjlist = new VertexNode[vertexnum];
+	for (int i = 0; i < vertexnum; i++)
+	{
+		adjlist[i].vertex = v[i];
+		adjlist[i].in = 0;
+		adjlist[i].firstEdge = nullptr;
+	}
+	ve = new int[vertexnum];
+	vl = new int[vertexnum];
+}
+
+//析构销毁
+ALGraph::~ALGraph()
+{
+	ArcNode* p, *tem;
+	for (int i = 0; i < vertexnum; i++)
+	{
+		p = adjlist[i].firstEdge;
+		while (p)
+		{
+			tem = p->next;
+			delete p;
+			p = tem;
+		}
+	}
+	delete[] adjlist;
+	adjlist = nullptr;
+	delete[] ve;
+	delete[] vl;
+	ve = vl = nullptr;
+}
+
+void ALGraph::inputEdges()
+{
+	cout << "请输入两个事件的顶点编号（范围：" << vertexnum - 1 << ")和活动时间" << endl;
+	for (int i = 0; i < arcnum; i++)
+	{
+		int vi, vj, weight;
+		cin >> vi >> vj >> weight;
+		if (!setEdge(vi, vj, weight))
+		{
+			cout << "您输入的顶点编号超过范围或相等，请重新输入：" << endl;
+			i--;
+		}
+	}
+}
+
+bool ALGraph::setEdge(int vi, int vj, int weight)
+{
+	ArcNode* s;
+	if (vi >= 0 && vi < vertexnum && vj >= 0 && vj < vertexnum && vi != vj)
+	{
+		s = new ArcNode;
+		s->adjvex = vj;
+		s->weight = weight;
+		s->next = adjlist[vi].firstEdge;
+		adjlist[vi].firstEdge = s;
+		adjlist[vj].in++;
+		return true;
+	}
+	return false;
+}
+
+//拓扑序列
+bool ALGraph::TopoLogicalSort(int result[],int& count)
+{
+	int stack[MAX_VERTEX];
+	int top = -1;
+	int inVex;
+	int outVex;
+	ArcNode* tem;
+	for (int i = 0; i < vertexnum; i++)
+	{
+		ve[i] = 0;
+		if (adjlist[i].in == 0)
+		{
+			stack[++top] = i;
+		}
+	}
+	count = 0;
+	while (top != -1)
+	{
+		inVex = stack[top--];
+		result[++count] = inVex;
+		tem = adjlist[inVex].firstEdge;
+		while (!tem)
+		{
+			adjlist[tem->adjvex].in--;
+			outVex = tem->adjvex;
+			if (adjlist[outVex].in == 0)
+			{
+				stack[++top] = outVex;
+			}
+			if (ve[inVex] + tem->weight > ve[outVex])
+			{
+				ve[outVex] = ve[inVex] + tem->weight;
+			}
+			tem = tem->next;
+		}
+	}
+	if (count == vertexnum)
+	{
+		return true;
+	}
+	return false;
+}
+
+//关键路径
+bool ALGraph::GriticalPath()
+{
+	int inVex, outVex;
+	int resultTop;
+	int i;
+	int weight;
+	ArcNode* p;
+	int result[MAX_VERTEX];
+	int count;
+	if (!TopoLogicalSort(result, count))
+	{
+		return false;
+	}
+	cout << "拓扑序列的排列顺序为:";
+	for (int i = 0; i < count; i++)
+	{
+		cout << result[i];
+	}
+	cout << endl;
+	cout << " ve数组的值为:" << endl;
+	for (int j = 0; j < count; j++)
+	{
+		cout << "ve["  <<j<<  "]=" << ve[j] << endl;
+	}
+	resultTop = count - 1;
+	inVex = result[resultTop--];
+	for (int i = 0; i < vertexnum; i++)
+	{
+		vl[i] = ve[i];
+	}
+	while (resultTop != -1)
+	{
+		inVex = result[resultTop--];
+		p = adjlist[inVex].firstEdge;
+		while (p!=nullptr)
+		{
+			outVex = p->adjvex;
+			if (vl[inVex] > vl[outVex] - p->weight)
+			{
+				vl[inVex] = vl[outVex] - p->weight;
+			}
+			p = p->next;
+		}
+	}
+	cout << "vl数组的值为：" << endl;
+	for (int i = 0; i < vertexnum; i++)
+	{
+		cout << "vl[" << i << "]=" << vl[i] << endl;
+	}
+	cout << "输出关键路径：" << endl;
+	for (int i = 0; i < vertexnum; i++)
+	{
+		p = adjlist[i].firstEdge;
+		while (p != nullptr)
+		{
+			inVex = i;
+			outVex = p->adjvex;
+			weight = p->weight;
+			int ee = ve[inVex];
+			int el = vl[outVex] - weight;
+			if (ee == el)
+			{
+				cout << "<" << inVex << "," << outVex << ">" << endl;
+			}
+			p = p->next;
+		}
+	}
+	return true;
+}
