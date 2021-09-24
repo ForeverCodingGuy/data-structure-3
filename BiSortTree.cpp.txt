@@ -1,0 +1,150 @@
+#include"BiSortTree.h"
+//二叉排序树实现
+template<class DataType>
+BiNode<DataType>* BiSortTree<DataType>::searchBST(BiNode<DataType>* bt, DataType key)
+{
+	if (bt = nullptr)
+	{
+		return nullptr;
+	}
+	else
+	{
+		if (bt->data == key)
+		{
+			return bt;
+		}
+		else if (bt->data > key)
+		{
+			bt = bt->lchild;
+			return searchBST(bt, key);
+		}
+		else
+		{
+			bt = bt->rchild;
+			return searchBST(bt, key);
+		}
+	}
+}
+template<class DataType>
+BiSortTree<DataType>::BiSortTree(DataType arr[], int len)
+{
+	root = nullptr;
+	for (int i = 0; i < len; i++)
+	{
+		insert(root, arr[i]);
+	}
+}
+//插入函数实现
+template<class DataType>
+void BiSortTree<DataType>::insert(BiNode<DataType>*& bt, DataType key)
+{
+	if (bt == nullptr)
+	{
+		bt = new BiNode;
+		bt->data = key;
+		bt->lchild = nullptr;
+		bt->rchild = nullptr;
+	}
+	else
+	{
+		if (bt->data > key)
+		{
+			insert(bt->lchild, key);
+		}
+		else
+		{
+			insert(bt->rchild, key);
+		}
+	}
+}
+
+template<class DataType>
+bool BiSortTree<DataType>::deleteBST(BiNode<DataType>*& bt, DataType key)
+{
+	if (bt == nullptr)
+	{
+		return false;
+	}
+	else
+	{
+		if (bt->data == key)
+		{
+			deleteNode(bt);
+		}
+		else if (bt->data > key)
+		{
+			bt = bt->lchild;
+			deleteBST(bt,key);
+		}
+		else
+		{
+			bt = bt->rchild;
+			deleteBST(bt, key);
+		}
+		return true;
+	}
+}
+
+template<class DataType>
+void BiSortTree<DataType>::deleteNode(BiNode<DataType>*& bt)
+{
+	BiNode<DataType>* p;
+	if (bt->lchild == nullptr && bt->rchild = nullptr)
+	{
+		p = bt;
+		delete p;
+		bt = nullptr;
+	}
+	else if (bt->lchild == nullptr)
+	{
+			p = bt;
+			bt = bt->rchild;
+			delete p;
+	}
+	else if(bt->rchild==nullptr)
+	{
+			p = bt;
+			bt = bt->lchild;
+			delete p;
+	}
+	else
+	{
+		BiNode<DataType>* parent;
+		BiNode<DataType>* pre;
+		parent = bt;
+		pre = bt->lchild;
+		while (pre->rchild)
+		{
+			parent = pre;
+			pre = pre->rchild;
+		}
+		bt->data = pre->data;
+		if (parent == bt)
+		{
+			parent->lchild = pre->lchild;
+		}
+		else
+		{
+			parent->rchild = pre->lchild;
+		}
+		delete pre;
+	}
+	
+}
+
+template<class DataType>
+void BiSortTree<DataType>::inorder(BiNode<DataType>* bt)
+{
+	if (root == nullptr)
+	{
+		cout << "二叉排序树为空" << endl;
+		return;
+	}
+	else
+	{
+		inorder(bt->lchild);
+		visit(bt);
+		inorder(bt->rchild);
+	}
+}
+

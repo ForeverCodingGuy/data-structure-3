@@ -1,0 +1,38 @@
+#include<iostream>
+using namespace std;
+//二叉排序树的每个结点
+template<class DataType>
+class BiNode
+{
+public:
+	DataType data;
+	BiNode* lchild;
+	BiNode* rchild;
+};
+template<class DataType>
+class BiSortTree
+{
+private:
+	BiNode* root;
+public:
+	BiSortTree(DataType arr[],int len);//初始化二叉排序树
+	~BiSortTree();//析构(本次暂未实现)
+	BiNode* searchBST(DataType key)
+	{
+		return searchBST(root, key);
+	}//查找key值的结点地址
+	void inorder()
+	{
+		inorder(root);
+	}//中序遍历
+private:
+	BiNode* searchBST(BiNode* bt, DataType key);
+	void insert(BiNode*& bt, DataType key);//在二叉排序树中插入元素
+	bool deleteBST(BiNode* &bt,DataType key);//
+	void deleteNode(BiNode*& bt);
+	void inorder(BiNode* p);
+};
+int main()
+{
+
+}
