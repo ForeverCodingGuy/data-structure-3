@@ -1,0 +1,42 @@
+#ifndef _AVL_H_
+#define _AVL_H_
+#include<iostream>
+using namespace std;
+template<class DataType>
+class BiNode
+{
+private:
+	DataType data;
+	BiNode* lchild;
+	BiNode* rchild;
+	int balanceFactor;
+};
+
+template<class DataType>
+class BalanceBiTree
+{
+private:
+	BiNode<DataType>* root;
+public:
+	BalanceBiTree(BiNode<DataType>*& bt);//初始化
+	~BalanceBiTree();//析构
+	void destory(BiNode<DataType>*& bt);//销毁二叉平衡数
+	void insert(BiNode<DataType>*& bt, BiNode<DataType>* p);//插入指定结点
+	int BiTreeDepth(BiNode<DataType>* bt);//求树的高度
+	int getNodeFactor(BiNode<DataType>* bt);//求某个结点的平衡因子
+	void factorAll(BiNode<DataType>*& bt);//求整个树结点的平衡因子
+	void factor_two(BiNode<DataType>*& bt, BiNode<DataType>*& p);//获取平衡因子为2或-2的结点
+	void factor_two_par(BiNode<DataType>*& bt, BiNode<DataType>*& p);//获取平衡因子为2或-2的结点的双亲
+	void LLadjust(BiNode<DataType>*& bt, BiNode<DataType>*& p, BiNode<DataType>*& f);//LL调整
+	void LRadjust(BiNode<DataType>*& bt, BiNode<DataType>*& p, BiNode<DataType>*& f);//LR调整
+	void RLadjust(BiNode<DataType>*& bt, BiNode<DataType>*& p, BiNode<DataType>*& f);//RL调整
+	void RRadjust(BiNode<DataType>*& bt, BiNode<DataType>*& p, BiNode<DataType>*& f);//RR调整
+	void ALLadjust(BiNode<DataType>*& bt);//将四种调整方式整合在一起
+};
+
+int main()
+{
+
+}
+
+#endif

@@ -1,0 +1,321 @@
+#include"AVL.h"
+//初始化
+template<class DataType>
+BalanceBiTree<DataType>::BalanceBiTree(BiNode<DataType>*& bt)
+{
+	bt = nullptr;
+}
+
+//析构
+template<class DataType>
+BalanceBiTree<DataType>::~BalanceBiTree()
+{
+	destory(root);
+}
+
+//销毁二叉平衡树
+template<class DataType>
+void BalanceBiTree<DataType>::destory(BiNode<DataType>*& bt)
+{
+	if (bt)
+	{
+		destory(bt->lchild);
+		destory(bt->rchild);
+		delete bt;
+	}
+}
+
+//插入指定结点
+template<class DataType>
+void BalanceBiTree<DataType>::insert(BiNode<DataType>*& bt, BiNode<DataType>* p)
+{
+	if (bt == nullptr)
+	{
+		bt = p;
+	}
+	else if (bt->data > p->data)
+	{
+		insert(bt->lchild, p);
+	}
+	else
+	{
+		insert(bt->rchild, p);
+	}
+}
+
+//求树高(利用递归)
+template<class DataType>
+int BalanceBiTree<DataType>::BiTreeDepth(BiNode<DataType>* bt)
+{
+	int ls, rs;
+	if (bt == nullptr)
+	{
+		return 0;
+	}
+	else
+	{
+		ls = BiTreeDepth(bt->lchild);
+		rs = BiTreeDepth(bt->rchild);
+		if (m > n)
+		{
+			return m + 1;
+		}
+		else
+		{
+			return n + 1;
+		}
+	}
+}
+
+//求某个结点平衡因子
+template<class DataType>
+int  BalanceBiTree<DataType>::getNodeFactor(BiNode<DataType>* bt)
+{
+	int ls= rs = 0;
+	if (bt)
+	{
+		ls = BiTreeDepth(bt->lchild);
+		rs = BiTreeDepth(bt->rchild);
+	}
+	return m - n;
+}
+
+//求所有结点的平衡因子
+template<class DataType>
+void BalanceBiTree<DataType>::factorAll(BiNode<DataType>*& bt)
+{
+	if (bt)
+	{
+		bt->balanceFactor = getNodeFactor(bt);
+		factorAll(bt->lchild);
+		factorAll(bt->rchild);
+	}
+}
+
+//获取平衡因子为2或-2的结点
+template<class DataType>
+void BalanceBiTree<DataType>::factor_two(BiNode<DataType>*& bt, BiNode<DataType>*& p)
+{
+	if (bt)
+	{
+		if (bt->balanceFactor == 2 || bt->balanceFactor == -2)
+		{
+			p = bt;
+		}
+		factor_two(bt->lchild, p);
+		factor_two(bt->rchild, p);
+	}
+}
+
+//获取平衡因子为2或-2的结点的双亲
+template<class DataType>
+void BalanceBiTree<DataType>::factor_two_par(BiNode<DataType>*& bt, BiNode<DataType>*& p)
+{
+	if (bt)
+	{
+		if (bt->lchild)
+		{
+			if (bt->lchild->balanceFactor == 2 || bt->lchild->balanceFactor == -2)
+			{
+				p = bt;
+			}
+		}
+		if (bt->rchild)
+		{
+			if (bt->rchild->balanceFactor == 2 || bt->rchild->balanceFactor == -2)
+			{
+				p = bt;
+			}
+		}
+	}
+	factor_two_par(bt->lchild, p);
+	fector_two_par(bt->rchild, p);
+}
+
+//LL调整,先判断不平衡结点是否为根节点，然后两种情况分别讨论
+template<class DataType>
+void BalanceBiTree<DataType>::LLadjust(BiNode<DataType>*& bt, BiNode<DataType>*& p, BiNode<DataType>*& f)
+{
+	BiNode<DataType>* r;
+	if (bt == p)
+	{
+		cout << "LL调整" << endl;
+		bt = p->lchild;
+		r = bt->rchild;
+		bt->rchild = p;
+		p->lchild = r;
+	}
+	else
+	{
+		if (f->rchild == p)
+		{
+			cout << "LL调整" << endl;
+			f->rchild = p->lchild;
+			r = f->rchild->rchild;
+			p->lchild = r;
+			f->rchild->lchild = p;
+		}
+		if (f->lchild == p)
+		{
+			cout << "LL调整" << endl;
+			f->lchild = p->lchild;
+			r = p->lchild->rchild;
+			f->lchild->rchild = p;
+			p->lchild = r;
+		}
+	}
+}
+
+//同理，LR调整
+template<class DataType>
+void BalanceBiTree<DataType>::LRadjust(BiNode<DataType>*& bt, BiNode<DataType>*& p, BiNode<DataType>*& f)
+{
+	BiNode<DataType>* r, l;
+	if (bt == p)
+	{
+		cout << "LR调整" << endl;
+		bt = p->lchild->rchild;
+		r = bt->rchild;
+		l = bt->lchild;
+		bt->lchild = p->lchild;
+		p->lchild->rchild = l;
+		bt->rchild = p;
+		p->lchild = r;
+	}
+	else
+	{
+		cout << "LR调整" << endl;
+		if (f->rchild == p)
+		{
+			f->lchild = p->lchild->rchild;
+			l = f->lchild->lchild;
+			r = f->lchild->rchild;
+			f->lchild->lchild = p->lchild;
+			p->lchild->rchild = l;
+			f->lchild->rchild = p;
+			f->lchild->rchild->lchild = r;
+		}
+		if (f->lchild == p)
+		{
+			f->rchild = p->lchild->rchild;
+			l = f->rchild->lchild;
+			r = f->rchild->rchild;
+			f->rchild->lchild = p->lchild;
+			p->lchild->rchild = l;
+			f->rchild->rchild = p;
+			p->lchild = r;
+		}
+	}
+}
+
+//RL调整
+template<class DataType>
+void BalanceBiTree<DataType>:: RLadjust(BiNode<DataType>*& bt, BiNode<DataType>*& p, BiNode<DataType>*& f)
+{
+	BiNode<DataType>* r, l;
+	if (bt == p)
+	{
+		bt = p->rchild->lchild;
+		r = bt->rchild;
+		l = bt->lchild;
+		bt->lchild = p;
+		bt->rchild = p->rchild;
+		bt->lchild->rchild = l;
+		bt->rchild->lchild = r;
+	}
+	else
+	{
+		if (f->lchild == p)
+		{
+			cout << "Rl调整" << endl;
+			f->lchild = p->rchild->lchild;
+			r = f->lchild->rchild;
+			l = f->lchild->lchild;
+			f->lchild->lchild = p;
+			f->lchild->rchild = p->rchild;
+			f->lchild->lchild->rchild = l;
+			f->lchild->rchild->lchild = r;
+		}
+		if (f->rchild == p)
+		{
+			cout << "RL调整" << endl;
+			f->rchild = p->rchild->lchild;
+			r = f->rchild->rchild;
+			l = f->rchild->lchild;
+			f->rchild->lchild = p;
+			f->rchild->rchild = p->rchild;
+			f->rchild->lchild->rchild = l;
+			f->rchild->rchild->lchild = r;
+		}
+	}
+}
+
+//RR调整
+template<class DataType>
+void BalanceBiTree<DataType>::RRadjust(BiNode<DataType>*& bt, BiNode<DataType>*& p, BiNode<DataType>*& f)
+{
+	BiNode<DataType>* l;
+	if (T == p)                  
+	{
+		cout << "RR调整" << endl;
+		T = p->rChild;        
+		l = T->lChild;
+		T->lChild = p;        
+		p->rChild = l;        
+	}
+	else {
+		if (f->rChild == p)     
+		{
+			cout << "RR调整" << endl;
+			f->rChild = p->rChild;        
+			l = f->rChild->lChild;
+			f->rChild->lChild = p;        
+			p->rChild = l;        
+		}
+		if (f->lChild == p)     
+		{
+			cout << "RR调整" << endl;
+			f->lChild = p->rChild;        
+			l = f->lChild->lChild;
+			f->lChild->lChild = p;     
+			p->rchild = l;
+		}
+	}
+}
+
+//将四种调整方式整合在一起
+template<class DataType>
+void BalanceBiTree<DataType>::ALLadjust(BiNode<DataType>*& bt)
+{
+	BiNode<DataType>* p, f;
+	factorAll(bt);
+	factor_two(bt, p);
+	factor_two_par(bt, f);
+	while (p)
+	{
+		if (p->balanceFactor == 2 && (p->lchild->balanceFactor == 1 || p->lchild->balanceFactor == 0))
+		{
+			LLadjust(bt, p, f);
+			factorAll(bt);
+		}
+		else if(p->balanceFactor==2&&p->lchild==-1)
+		{
+			LRadjust(bt, p, f);
+			factorAll(bt);
+		}
+		else if (p->balanceFactor == -2 && (p->rchild->balanceFactor == -1 || p->rchild->balanceFactor == 0))
+		{
+			RRadjust(bt, p, f);
+			factorAll(bt);
+		}
+		else
+		{
+			RLadjust(bt, p, f);
+			factorAll(bt);
+		}
+		p = nullptr;
+		f = nullptr;
+		factor_two(bt, p);
+		factor_two_par(bt, p);
+	}
+}
