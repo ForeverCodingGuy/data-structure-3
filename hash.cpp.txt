@@ -1,0 +1,68 @@
+#include<iostream>
+#include<cmath>
+using namespace std;
+#define MAX_ 100
+//求大于元素个数的最小素数
+int prime(int num)
+{
+	int i;
+	int prim;
+	for ( prim = num + 1; prim < MAX_; prim++)
+	{
+		for ( i = 2; i <=sqrt(prim); i++)
+		{
+			if (prim % i == 0)
+			{
+				break;
+			}
+		}
+		if (i == sqrt(prim) + 1)
+		{
+			return prim;
+		}
+	}
+}
+void hashkey(int n, int pri,int* rec)
+{
+	int key = n % pri;
+	if (rec[key] == -1 || rec[key] == n)
+	{
+		rec[key] = n;
+		return;
+	}
+	else
+	{
+		while (true)
+		{
+			key = (++key) % pri;
+			if (rec[key] == -1 || rec[key] == n)
+			{
+				rec[key] = n;
+				return;
+			}
+		}
+	}
+}
+
+void test()
+{
+	int num;
+	cout << "请输入元素个数:" << endl;
+	cin >> num;
+	int* arr = new int[num];
+	cout << "请依次输入各元素" << endl;
+	int n;
+	int rec[] = { -1 };
+	int pri = prime(num);
+	for (int i = 0; i < num; i++)
+	{
+		cin >> n;
+		arr[i] = n;
+		hashkey(n, pri,rec);
+	}
+	
+}
+int main()
+{
+	test();//测试样例
+}
