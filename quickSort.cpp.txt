@@ -1,0 +1,51 @@
+#include<iostream>
+//求轴值
+int partition(int* arr, int first,int end)
+{
+	int i = first;
+	int j = end;
+	while (i < j)
+	{
+		while (i < j && arr[i] <=arr[j])
+		{
+			j--;
+		}
+		if (i < j)
+		{
+			int tem = arr[j];
+			arr[j] = arr[i];
+			arr[i] = tem;
+			i++;
+		}
+		while (i < j && arr[i] <= arr[j])
+		{
+			i++;
+		}
+		if (i < j)
+		{
+			int tem = arr[j];
+			arr[j] = arr[i];
+			arr[i] = tem;
+			j--;
+		}
+	}
+	return i;
+}
+
+//利用递归求轴值实现快速排序
+void quickSort(int* arr, int first,int end)
+{
+	if (first < end)
+	{
+		int pos = partition(arr, first, end);
+		quickSort(arr, 0, pos - 1);
+		quickSort(arr, pos + 1, end);
+	}
+}
+using namespace std;
+int main()
+{
+	int arr[] = { 12,6,4,9,17,24,18,39 };
+	int sz = sizeof(arr) / sizeof(arr[0]);
+
+}
