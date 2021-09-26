@@ -1,0 +1,63 @@
+void merge(int* arr, int* tem, int left, int mid, int right)
+{
+	int l_pos = left;
+	int r_pos = mid + 1;
+	int pos = left;
+	while (l_pos <= mid && r_pos <= right)
+	{
+		if (arr[l_pos] <= arr[r_pos])
+		{
+			tem[pos++] = arr[l_pos++];
+		}
+		else
+		{
+			tem[pos++] = arr[r_pos++];
+		}
+	}
+	while (l_pos <= mid)
+	{
+		tem[pos++] = arr[l_pos++];
+	}
+	while (r_pos <= right)
+	{
+		tem[pos++] = arr[r_pos++];
+	}
+	//然后将tem数组拷回原来数组
+	while (left <= right)
+	{
+		arr[left++] = tem[left++];
+	}
+}
+//归并排序
+void msort(int* arr, int* tem, int left, int right)
+{
+	if (left < right)
+	{
+		int mid = (left + right) / 2;
+		//将分割的左部分排序
+		msort(arr, tem, left, mid);
+		//将分割的右部分排序
+		msort(arr, tem, mid + 1, right);
+		//然后将两块合并
+		merge(arr, tem, left, mid, right);
+	}
+}
+//归并排序入口
+void merge_sort(int* arr, int n)
+{
+	//先分配一个暂时存储空间
+	int* tem = new int[n];
+	//进入归并第一步(不停分割成多部分）
+	msort(arr, tem, 0, n - 1);
+	delete[] tem;
+}
+int main()
+{
+	int arr[] = { 3,1,12,8,11,23,18 };
+	int sz = sizeof(arr) / sizeof(arr[0]);
+	merge_sort(arr, sz);
+	for (int i = 0; i < sz; i++)
+	{
+		cout << arr[i] << " ";
+	}
+}
