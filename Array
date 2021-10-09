@@ -1,0 +1,146 @@
+#include<iostream>
+#include<cassert>
+using namespace std;
+template<class T>
+class Array
+{
+private:
+	T* data;
+	int size;
+	int capacity;
+	void resize(int newcapacity)
+	{
+		T* newdata = new T[newcapacity];
+		for (int i = 0; i < size; i++)
+		{
+			newdata[i] = data[i];
+		}
+		data = newdata;
+		capacity = newcapacity;
+		newdata = nullptr;
+	}
+public:
+	Array()
+	{
+		capacity = 5;
+		data = new T[capacity];
+		size = 0;
+	}
+	Array(cap)
+	{
+		capacity = cap;
+		data = new T[capacity];
+		size = 0;
+	}
+	bool isempty()
+	{
+		return size == 0;
+	}
+	int get_size()
+	{
+		return size;
+	}
+	int get_capacity()
+	{
+		return capacity;
+	}
+	void add(int dex, T item)
+	{
+		assert(index >= 0 && index <= size);
+		if (size == capacity)
+		{
+			resize(2 * capacity);
+		}
+		for (int i = size - 1; i >= index; --i)
+		{
+			data[i + 1] = data[i];
+		}
+		data[index] = item;
+		++size;
+	}
+	void addfirst(T item)
+	{
+		add(0, item);
+	}
+	void addlast(T item)
+	{
+		add(size, item);
+	}
+	T get(int index)
+	{
+		assert(index >= 0 && index < size);
+		return data[index];
+	}
+	void set(int index, T item)
+	{
+		assert(index >= 0 && index < size);
+		data[index] = item;
+	}
+	bool contains(T item)
+	{
+		for (int i = 0; i < size; i++)
+		{
+			if (data[i] == item)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	int find(T item)
+	{
+		for (int i = 0; i < size; i++)
+		{
+			if (data[i] == item)
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+	T remove(int index)
+	{
+		assert(index >= 0 && index < size);
+		T ptn = data[index];
+		for (int i = index; i < size - 1; i++)
+		{
+			data[i] = data[i + 1];
+		}
+		--size;
+		if (size == capacity / 4&&capacity/2!=0)
+		{
+			resize(capacity / 2);
+		}
+		return ptn;
+	}
+	T removefirst()
+	{
+		return remove(0);
+	}
+	T removelast()
+	{
+		return remove(size - 1);
+	}
+	void  removeElem(T elm)
+	{
+		int index = find(elm);
+		if (elm != -1)
+		{
+			remove(index);
+		}
+	}
+	void print()
+	{
+		cout << "Array:size=" << size << ",capacity=" << capacity << endl;
+		cout << "[";
+		for (int i = 0; i < size; i++)
+		{
+			cout << data[i];
+			if (i != size - 1)
+			{
+				cout << ",";
+			}
+		}
+		cout << "]" << endl;
+	}
+};
