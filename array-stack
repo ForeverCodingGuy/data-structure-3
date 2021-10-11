@@ -1,0 +1,76 @@
+#include<iostream>
+#include<cassert>
+#define CAPACITY 5
+template<class T>
+class ArrayStack
+{
+private:
+	T* data;
+	int size;
+	int capacity;
+	void resize(int cap)
+	{
+		T* newdata = new T[cap];
+		for (int i = 0; i < size; i++)
+		{
+			newdata[i] = data[i];
+		}
+		data = newdata;
+		capacity = cap;
+		newdata = nullptr;
+	}
+public:
+	ArrayStack()
+	{
+		data = new T[CAPACITY];
+		size = 0;
+		capacity = CAPACITY;
+	}
+	ArrayStack(int cap)
+	{
+		data new T[cap];
+		size = 0;
+		capacity = cap;
+	}
+
+	void push(T item)
+	{
+		if (size == capacity)
+		{
+			resize(2 * capacity);
+		}
+		data[size++] = item;
+	}
+
+	T top()
+	{
+		assert(!isempty());
+		return data[size - 1];
+	}
+
+	T pop()
+	{
+		assert(!isempty());
+		return data[--size];
+	}
+
+	bool isempty()
+	{
+		return size == 0;
+	}
+
+	int size()
+	{
+		return size;
+	}
+
+	int get_capacity()
+	{
+		return capacity;
+	}
+};
+
+
+int main()
+{
+}
