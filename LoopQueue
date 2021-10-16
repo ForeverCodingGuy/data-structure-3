@@ -1,0 +1,80 @@
+#include<iostream>
+#include<cassert>
+
+using namespace std;
+
+#define INIT_CAPACITY 20
+
+template<class T>
+class LoopQueue
+{
+private:
+	int front;
+	int tail;
+	int size;
+	int capacity;
+	T* data;
+	void resize(int newcapacity)
+	{
+		T* newdata = new T[newcapacity];
+		for (int i = 0; i < capacity; i++)
+		{
+			newdata[i] = data[(front + 1) % capacity];
+		}
+		tail = capacity;
+		front = 0;
+		capacity = newcapacity;
+		data = newcapacity;
+		newdata = nullptr;
+	}
+public:
+	LoopQueue()
+	{
+		front = tail = 0;
+		size = 0;
+		data = new T[INIT_CAPACITY];
+		capacity = INIT_CAPACITY;
+	}
+	LoopQueue(int cap)
+	{
+		data = new T[cap];
+		capacity = cap;
+		size = 0;
+		front = tail = 0;
+	}
+	bool empty()
+	{
+		return front == tail;
+	}
+	int get_capacity()
+	{
+		return capacity;
+	}
+	int size()
+	{
+		return size;
+	}
+	void enqueue(T e)
+	{
+		if ((tail + 1) % capacity == front)
+		{
+			resize(2 * capacity);
+		}
+		data[tail] = e;
+		tail = (tail + 1) % capacity;
+		++size;
+	}
+	T daqueue()
+	{
+		assert(front != tail);
+		T ret = data[front];
+		front = (front + 1) % capacity;
+		if (size == capacity / 4 && capacity / 2 != 0) resize(capacity / 2);
+		return ret;
+	}
+	T front()
+	{
+		assert(front != tail);
+		return data[front];
+	}
+};
